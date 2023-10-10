@@ -5,18 +5,18 @@
     #define ERRO -32000
     #define ORDENADA 1  
     
-    typedef struct lista_ LISTA;
+    typedef struct skiplist_ LISTA;
     #include "item.h"
 
     LISTA *lista_criar(void);
 
     bool lista_inserir(LISTA *lista, ITEM *item);
     
-    bool lista_alterar(LISTA *lista, char palavra[], char significado[]);
+    bool lista_alterar(LISTA *lista, char *palavra, char *significado);
 
-    ITEM *lista_remover(LISTA *lista, char palavra[]); 
+    ITEM *lista_remover(LISTA *lista, char *palavra); 
 
-    ITEM *lista_busca(LISTA *lista, char palavra[]);
+    ITEM *lista_busca(LISTA *lista, char *palavra);
 
     void lista_imprimir(LISTA *lista, char letra);
 
