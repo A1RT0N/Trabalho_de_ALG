@@ -68,3 +68,12 @@ void item_imprimir(ITEM *item){
   if (item != NULL)
     printf("%s: %s\n", item->palavra, item->significado);
 }
+
+
+bool item_maior(ITEM* item_novo, ITEM* item){
+  if(strcmp(item_get_palavra(item_novo), item_get_palavra(item)) > 0){
+    return true;
+  }
+
+  return false;
+}

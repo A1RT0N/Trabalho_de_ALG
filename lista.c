@@ -12,7 +12,6 @@ struct no_{
 
 struct skiplist_{
     NO *sentinela; // Sentinela
-    NO *fim;
     int tamanho; 
 };
 
