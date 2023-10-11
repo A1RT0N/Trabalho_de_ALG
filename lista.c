@@ -57,8 +57,7 @@ LISTA *lista_criar(void){
 }
 
 int lista_inserir(LISTA *lista, ITEM *item){
-    NO *novo = (NO *) malloc(sizeof(NO)); // Nó atual
-    if(novo == NULL) return 0;
+    NO *novo;
     novo = lista->cabeca;
 
     if(recursao_inserir(lista, item, novo) != NULL) return 1;
@@ -68,13 +67,14 @@ int lista_inserir(LISTA *lista, ITEM *item){
 
 NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual){
     NO *analisado_ultimo = NULL;
-    while (atual->proximo != NULL|| (strcmp(item_get_palavra(atual->item), item_get_palavra(item)) < 0)) { // Andar horizontalmente
+    while (atual->proximo != NULL && (strcmp(item_get_palavra(atual->proximo->item), item_get_palavra(item)) < 0)) { // Andar horizontalmente
         atual = atual->proximo; // Andar na linha enquanto o próximo for menor que o parâmetro
     }
 
     if(atual->abaixo != NULL){ // Andar verticalmente
         analisado_ultimo = recursao_inserir(lista,item,atual->abaixo);
     }
+    
 
     if(atual->level == 0 || analisado_ultimo != NULL){ // Vai ter mais coisa
         // inserir o nó
@@ -93,6 +93,7 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual){
 
 }
 
+
 int lista_alterar(LISTA *lista, ITEM* item);
 
 ITEM *lista_remover(LISTA *lista, ITEM* item); 
@@ -104,14 +105,14 @@ ITEM *lista_busca(LISTA *lista, ITEM* item, int level){
             if (level == 0) {
                 return NULL;
             }
-            return lista_busca(lista, analisado, level-1);
+            return lista_busca(lista, analisado->item, level-1);
         }
         analisado = analisado->proximo;
     }
     if (strcmp(item_get_palavra(analisado->item), item_get_palavra(item)) == 0) {
         return analisado->item;
     }
-    lista_busca(lista, analisado, level-1);
+    lista_busca(lista, analisado->item, level-1);
 }
 
 void lista_imprimir(LISTA *lista, ITEM* item);
