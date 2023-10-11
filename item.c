@@ -13,13 +13,9 @@ ITEM *item_criar(char palavra[], char significado[]){
     
   if (item != NULL){
 
-    for(int i = 0; i < 50; i++){
-      item->palavra[i] = palavra[i];
-    }
+    strcpy(item->palavra, palavra);
 
-    for(int i = 0; i < 300; i++){
-      item->significado[i] = significado[i];
-    }
+    strcpy(item->significado, significado);
 
     return(item);
   }
