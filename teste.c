@@ -2,6 +2,8 @@
 
 int main(){
 
+    srand((unsigned int)time(NULL)); // PRECISA DESSE CARA PRA GERAR ALEATÓRIA
+
     char palavra[7] = "palavra";
     char significado[11] = "significado";
 

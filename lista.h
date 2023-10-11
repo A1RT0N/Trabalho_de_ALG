@@ -10,21 +10,21 @@
 
     LISTA *lista_criar(void);
 
-    bool lista_inserir(LISTA *lista, ITEM *item);
+    int lista_inserir(LISTA *lista, ITEM *item);
     
-    bool lista_alterar(LISTA *lista, char *palavra, char *significado);
+    int lista_alterar(LISTA *lista, ITEM* item);
 
-    ITEM *lista_remover(LISTA *lista, char *palavra); 
+    ITEM *lista_remover(LISTA *lista, ITEM* item);  
 
-    ITEM *lista_busca(LISTA *lista, char *palavra);
+    ITEM *lista_busca(LISTA *lista, ITEM* item, int level);
 
-    void lista_imprimir(LISTA *lista, char letra);
+    void lista_imprimir(LISTA *lista, ITEM* item);
 
-    bool lista_apagar(LISTA **lista);
+    int lista_apagar(LISTA **lista);
     
-    int lista_tamanho(LISTA *lista);
-    bool lista_vazia(LISTA *lista);
-    bool lista_cheia(LISTA *lista);
+    // int lista_tamanho(LISTA *lista);
+    int lista_vazia(LISTA *lista);
+    int lista_cheia(LISTA *lista);
     
 #endif
 

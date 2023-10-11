@@ -23,13 +23,13 @@ ITEM *item_criar(char palavra[], char significado[]){
   return(NULL);
 }
 
-bool item_apagar(ITEM **item){
+int item_apagar(ITEM **item){
    if (*item != NULL){
       free (*item);
       *item = NULL; 
-      return(true);
+      return(1);
    }
-   return(false);
+   return(0);
 }
 
 char* item_get_palavra(ITEM *item){
@@ -38,26 +38,26 @@ char* item_get_palavra(ITEM *item){
 }
 
 
-bool item_set_palavra(ITEM *item, char palavra[]){
+int item_set_palavra(ITEM *item, char palavra[]){
   if (item != NULL){
       for(int i = 0; i < 50; i++){
         item->palavra[i] = palavra[i];
       }
-      return (true);
+      return (1);
   }
-  return (false);
+  return (0);
 }
 
 
-bool item_set_significado(ITEM *item, char significado[]){
+int item_set_significado(ITEM *item, char significado[]){
 
   if (item != NULL){
       for(int i = 0; i < 300; i++){
         item->significado[i] = significado[i];
       }
-      return (true);
+      return (1);
   }
-  return (false);
+  return (0);
 }
 
 void item_imprimir(ITEM *item){
@@ -66,10 +66,10 @@ void item_imprimir(ITEM *item){
 }
 
 
-bool item_maior(ITEM* item_novo, ITEM* item){
+int item_maior(ITEM* item_novo, ITEM* item){
   if(strcmp(item_get_palavra(item_novo), item_get_palavra(item)) > 0){
-    return true;
+    return 1;
   }
 
-  return false;
+  return 0;
 }
