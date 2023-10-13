@@ -14,7 +14,10 @@ struct skiplist_{
 
 };
 
+// PROTÓTIPOS DAS FUNÇÕES AUXILIARES
 NO* recursao_inserir(LISTA* lista, ITEM* item, NO *novo);
+int recursao_remover(LISTA* lista, char* palavra, int level);
+NO* lista_busca_caracter(LISTA *lista, ITEM* item, int level);
 int randomico(void);
 
 
@@ -75,7 +78,6 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual){
         analisado_ultimo = recursao_inserir(lista,item,atual->abaixo);
     }
     
-
     if(atual->level == 0 || analisado_ultimo != NULL){ // Vai ter mais coisa
         // inserir o nó
         NO *novo = (NO *) malloc(sizeof(NO));
@@ -90,7 +92,6 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual){
         return NULL;
     }
 
-
 }
 
 
@@ -103,7 +104,44 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {
     item_set_significado(procurado, significado);
 }
 
-ITEM *lista_remover(LISTA *lista, char *palavra); 
+void lista_remover(LISTA *lista, char *palavra){
+    if(recursao_remover(lista, palavra, MAX_LEVEL) == 0){
+        printf("OPERACAO INVALIDA\n");
+    }else{
+        return;
+    }
+}
+
+int recursao_remover(LISTA* lista, char* palavra, int level){
+
+    // NO *analisado = lista->cabeca->proximo;
+    // for(int i = 0; i < MAX_LEVEL - level; i++){
+    //     analisado = analisado->abaixo;
+    // }
+    
+    // while (analisado->proximo != NULL && strcmp(item_get_palavra(analisado->proximo->item), palavra) < 0){
+    //     analisado = analisado->proximo;
+    // }
+
+    // if(level == 0 && strcmp(item_get_palavra(analisado->proximo->item), palavra) != 0){
+    //     return 0;
+    // }
+
+    // if(strcmp(item_get_palavra(analisado->proximo->item), palavra) == 0){
+    //     NO *removido = analisado->proximo;
+    //     analisado->proximo = analisado->proximo->proximo;
+    //     free(removido);
+    //     recursao_remover(lista,palavra, level-1); // Se achou, desce um nível e tenta de novo
+    //     return 1;
+    // }
+
+
+    // recursao_remover(lista,palavra, level-1); // Se não achou, desce um nível e tenta de novo
+
+
+
+}
+
 
 ITEM* lista_busca(LISTA *lista, ITEM* item, int level){
     NO *analisado = lista->cabeca->proximo;
@@ -122,7 +160,37 @@ ITEM* lista_busca(LISTA *lista, ITEM* item, int level){
     lista_busca(lista, analisado->item, level-1);
 }
 
-void lista_imprimir(LISTA *lista, char c);
+void lista_imprimir(LISTA *lista, char c){
+    NO* primeiro;
+
+    if((primeiro = lista_busca_caracter(lista, primeiro->item, MAX_LEVEL)) == NULL){
+        printf("NAO HA PALAVRAS INICIADAS POR ch1\n");
+        return;
+    }
+    while (primeiro != NULL && item_get_palavra(primeiro->item)[0] == c) {
+        item_imprimir(primeiro->item);
+        primeiro = primeiro->proximo;
+    }
+
+}
+
+NO* lista_busca_caracter(LISTA *lista, ITEM* item, int level){
+    NO *analisado = lista->cabeca->proximo;
+    while (item_get_palavra(analisado->item)[0] < item_get_palavra(item)[0]) {
+        if (analisado->proximo == NULL) {
+            if (level == 0) {
+                return NULL;
+            }
+            return lista_busca_caracter(lista, analisado->item, level-1);
+        }
+        analisado = analisado->proximo;
+    }
+    if ((item_get_palavra(analisado->item)[0] == item_get_palavra(item)[0])) {
+        return analisado;
+    }
+    lista_busca_caracter(lista, analisado->item, level-1);
+}
+
 
 int lista_apagar(LISTA **lista){
     // definição de dois nós auxiliares para a liberação de memória

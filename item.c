@@ -63,7 +63,7 @@ int item_set_significado(ITEM *item, char *significado){
 
 void item_imprimir(ITEM *item){
   if (item != NULL)
-    printf("%s: %s\n", item->palavra, item->significado);
+    printf("%s %s\n", item->palavra, item->significado);
 }
 
 

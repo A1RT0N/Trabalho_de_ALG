@@ -15,7 +15,7 @@
     
     int lista_alterar(LISTA *lista, char *palavra, char *significado);
 
-    ITEM *lista_remover(LISTA *lista, char *palavra);  
+    void lista_remover(LISTA *lista, char *palavra);  
 
     ITEM* lista_busca(LISTA *lista, ITEM* item, int level);
 

@@ -23,7 +23,7 @@ int main(){
     char instrucao[10];
     // um loop que voltará sempre a requisitar uma instrução, permitindo que um número não predefinido de instruções aconteça
     while (1) {
-        scanf("%s", instrucao);
+        scanf("%s ", instrucao);
 
         if (strcmp(instrucao, "insercao") == 0) {
         
@@ -59,7 +59,7 @@ int main(){
         char *palavra;
         palavra = (char *) malloc(50);
         scanf(" %s", palavra);
-        // lista_remover(dicionario, palavra); 
+        lista_remover(dicionario, palavra); 
 
         }
         else if (strcmp(instrucao, "busca") == 0) {
