@@ -17,7 +17,7 @@
 
     ITEM *lista_remover(LISTA *lista, char *palavra);  
 
-    ITEM lista_busca(LISTA *lista, ITEM item, int level);
+    ITEM* lista_busca(LISTA *lista, ITEM* item, int level);
 
     void lista_imprimir(LISTA *lista, char c);
 

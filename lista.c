@@ -105,7 +105,7 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {
 
 ITEM *lista_remover(LISTA *lista, char *palavra); 
 
-ITEM lista_busca(LISTA *lista, ITEM item, int level){
+ITEM* lista_busca(LISTA *lista, ITEM* item, int level){
     NO *analisado = lista->cabeca->proximo;
     while (strcmp(item_get_palavra(analisado->item), item_get_palavra(item)) < 0) {
         if (analisado->proximo == NULL) {
