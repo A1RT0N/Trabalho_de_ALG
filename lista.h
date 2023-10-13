@@ -4,6 +4,7 @@
     #define inicial 0
     #define ERRO -32000
     #define ORDENADA 1  
+    #define MAX_LEVEL 5
     
     typedef struct skiplist_ LISTA;
     #include "item.h"
@@ -12,13 +13,13 @@
 
     int lista_inserir(LISTA *lista, ITEM *item);
     
-    int lista_alterar(LISTA *lista, ITEM* item);
+    int lista_alterar(LISTA *lista, char *palavra, char *significado);
 
-    ITEM *lista_remover(LISTA *lista, ITEM* item);  
+    ITEM *lista_remover(LISTA *lista, char *palavra);  
 
-    ITEM *lista_busca(LISTA *lista, ITEM* item, int level);
+    ITEM lista_busca(LISTA *lista, ITEM item, int level);
 
-    void lista_imprimir(LISTA *lista, ITEM* item);
+    void lista_imprimir(LISTA *lista, char c);
 
     int lista_apagar(LISTA **lista);
     

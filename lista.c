@@ -94,11 +94,18 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual){
 }
 
 
-int lista_alterar(LISTA *lista, ITEM* item);
+int lista_alterar(LISTA *lista, char *palavra, char *significado) {
+    // cria item que servirá para utilizar a busca, usando a palavra que terá o verbete alterado
+    ITEM *procurado;
+    procurado = item_criar(palavra, significado);
+    procurado = lista_busca(lista, procurado, MAX_LEVEL);
+    // muda o verbete da palavra
+    item_set_significado(procurado, significado);
+}
 
-ITEM *lista_remover(LISTA *lista, ITEM* item); 
+ITEM *lista_remover(LISTA *lista, char *palavra); 
 
-ITEM *lista_busca(LISTA *lista, ITEM* item, int level){
+ITEM lista_busca(LISTA *lista, ITEM item, int level){
     NO *analisado = lista->cabeca->proximo;
     while (strcmp(item_get_palavra(analisado->item), item_get_palavra(item)) < 0) {
         if (analisado->proximo == NULL) {
@@ -115,9 +122,37 @@ ITEM *lista_busca(LISTA *lista, ITEM* item, int level){
     lista_busca(lista, analisado->item, level-1);
 }
 
-void lista_imprimir(LISTA *lista, ITEM* item);
+void lista_imprimir(LISTA *lista, char c);
 
 int lista_apagar(LISTA **lista){
+    // definição de dois nós auxiliares para a liberação de memória
+    NO *tmp = (*lista)->cabeca;
+    NO *prox;
+    // int j auxiliar para saber quantos níveis descer antes de ir para direita
+    int j = 1;
+    for (int i = MAX_LEVEL; i >=0; i--) {
+        // free em todos os items e nós do nível
+        prox = tmp->proximo;
+        while (tmp != NULL) {
+            free(tmp->item);
+            free(tmp);
+            tmp = prox;
+            prox = tmp->proximo;
+        }
+        // descer níveis de acordo com o j (assim passando por todos)
+        tmp = (*lista)->cabeca;
+        for (int j; j >=0; j++) {
+            tmp = tmp->abaixo;
+        } 
+        j++;
+    }
+    // free de todos os nós cabeça (um de cada nível)
+    tmp = (*lista)->cabeca;
+    for (int i = 0; i < MAX_LEVEL; i++) {
+        prox = tmp->abaixo;
+        free(tmp);
+        tmp = prox;
+    }
 
 }
 
@@ -140,4 +175,3 @@ int lista_cheia(LISTA *lista){
     }
     return 1;
 }
-    

@@ -37,24 +37,25 @@ char* item_get_palavra(ITEM *item){
     return(item->palavra);
 }
 
+char* item_get_significado(ITEM *item){
+  if (item != NULL) 
+    return(item->significado);
+}
 
-int item_set_palavra(ITEM *item, char palavra[]){
+
+int item_set_palavra(ITEM *item, char *palavra){
   if (item != NULL){
-      for(int i = 0; i < 50; i++){
-        item->palavra[i] = palavra[i];
-      }
+      strcpy(item->palavra, palavra);
       return (1);
   }
   return (0);
 }
 
 
-int item_set_significado(ITEM *item, char significado[]){
+int item_set_significado(ITEM *item, char *significado){
 
   if (item != NULL){
-      for(int i = 0; i < 300; i++){
-        item->significado[i] = significado[i];
-      }
+      strcpy(item->significado, significado);
       return (1);
   }
   return (0);

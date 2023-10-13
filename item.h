@@ -13,6 +13,7 @@
 	int item_apagar(ITEM **item);
 	void item_imprimir(ITEM *item);
 	char* item_get_palavra(ITEM *item);
+	char* item_get_significado(ITEM *item);
 	int item_set_palavra(ITEM *item, char palavra[]);
 	int item_set_significado(ITEM *item, char significado[]);
 
