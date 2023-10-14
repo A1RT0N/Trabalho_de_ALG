@@ -1,105 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "item.h"
 #include "lista.h"
-#define TAM 5
-typedef struct no_ NO;
-struct no_{
+
+typedef struct no_ {
+    struct no_ *proximo;
+    struct no_ *abaixo;
+    int nivel;
     ITEM *item;
-    NO *proximo;
-    NO *abaixo;
-    int level;
+} NO;
+
+struct skiplist_ {
+    NO *cabeca;
+    int tamanho_maximo;
 };
 
-struct skiplist_{
-    NO *cabeca; // Sentinela
-    int max_level; 
-
-};
-
-// PROTÓTIPOS DAS FUNÇÕES AUXILIARES
-NO* recursao_inserir(LISTA* lista, ITEM* item, NO *novo);
+NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual);
+int randomizacao(void);
+void imprimir_lista(LISTA *lista);
 int recursao_remover(LISTA* lista, char* palavra, int level);
 NO* lista_busca_caracter(LISTA *lista, ITEM* item, int level);
-int randomico(void);
 
 
-int randomico(void){
-    return rand()%2;
+int randomizacao(void) {
+    return rand() % 2;
 }
 
+LISTA *lista_criar(void) {  /// OKKKKKKKKKKKKKKKKK
+    LISTA *skiplist = (LISTA *)malloc(sizeof(LISTA));
 
-LISTA *lista_criar(void){
-    LISTA *lista = (LISTA *) malloc(sizeof(LISTA));
+    skiplist->tamanho_maximo = MAX_LEVEL;
 
-    if(lista==NULL) return NULL;
+    int nivel = MAX_LEVEL - 1;
 
-    lista->max_level = TAM; // Escolhemos 5 porque 1/2^5 = 1/32, ou seja, há uma chance de 3% de um nó estar no nível 5
-
-    NO* header = (NO *) malloc(sizeof(NO));
-    if(header == NULL) return NULL;
-
+    NO *header = (NO *)malloc(sizeof(NO));
     header->proximo = NULL;
-    header->level = 4;
+    header->nivel = nivel;
+    header->item = NULL;
 
-    lista->cabeca = header;
+    skiplist->cabeca = header;
 
-    NO* auxiliar = header;
+    NO *aux = header;
 
-    if(lista->cabeca == NULL) return NULL;
+    for (int i = 0; i < MAX_LEVEL - 1; i++) {
+        nivel--; // Nivel 3,2,1,0
 
-    for(int i = 0; i < TAM-1; i++){
-        NO* novo_header = (NO *) malloc(sizeof(NO));
+        NO *new_header = (NO *)malloc(sizeof(NO));
+        new_header->proximo = NULL;
+        new_header->nivel = nivel;
+        new_header->item = NULL;
 
-        novo_header->proximo = NULL;
-        novo_header->level = i;
+        aux->abaixo = new_header;
 
-        auxiliar->abaixo = novo_header;
-        auxiliar = novo_header;
+        aux = new_header;
     }
-    
-    return (lista);
+
+    return skiplist;
+}
+
+void imprimir_lista(LISTA *lista) {        //////     OKKKKKKKKKKKK
+    NO *atual = lista->cabeca;
+        for (int i = 0; i < MAX_LEVEL; i++) {  
+        while (atual->proximo != NULL) {
+            printf("Nivel: %d\n", atual->proximo->nivel);
+            printf("Palavra: %s\n", item_get_palavra(atual->proximo->item));
+            printf("Significado: %s\n", item_get_significado(atual->proximo->item));
+            printf("\n");
+            atual = atual->proximo;
+        }
+        atual = atual->abaixo;
+    }
 
 }
 
-int lista_inserir(LISTA *lista, ITEM *item){
-    NO *novo;
-    novo = lista->cabeca;
-
-    if(recursao_inserir(lista, item, novo) != NULL) return 1;
-
-    return 0;
-}
-
-NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual){
+NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual) {   //////// OKKKKKKKKK
     NO *analisado_ultimo = NULL;
-    while (atual->proximo != NULL && (strcmp(item_get_palavra(atual->proximo->item), item_get_palavra(item)) < 0)) { // Andar horizontalmente
-        atual = atual->proximo; // Andar na linha enquanto o próximo for menor que o parâmetro
+
+    // Encontrar a posição correta para inserir o novo nó
+    while (atual->proximo != NULL && strcmp(item_get_palavra(atual->proximo->item), item_get_palavra(item)) < 0) {
+        atual = atual->proximo;
     }
 
-    if(atual->abaixo != NULL){ // Andar verticalmente
-        analisado_ultimo = recursao_inserir(lista,item,atual->abaixo);
+    if (atual->abaixo != NULL) {
+        analisado_ultimo = recursao_inserir(lista, item, atual->abaixo);
     }
-    
-    if(atual->level == 0 || analisado_ultimo != NULL){ // Vai ter mais coisa
-        // inserir o nó
-        NO *novo = (NO *) malloc(sizeof(NO));
-        if(novo == NULL) return NULL;
-        novo->item = item; // O item do novo nó é o item que foi passado como parâmetro no início da função
-        novo->proximo = atual->proximo; // Inserir o novo nó na lista parte 1
-        novo->abaixo = analisado_ultimo; // O de baixo é o último que foi inserido (se estiver no level 0, o de baixo é NULL)
-        novo->level = atual->level; // O level é o mesmo do atual
-        atual->proximo = novo; // Inserir o novo nó na lista parte 2
-        
-        if(randomico() == 1) return novo; 
+
+    if (atual->nivel == 0 || analisado_ultimo != NULL) {
+        NO *novo = (NO *)malloc(sizeof(NO));
+        novo->item = item;
+        novo->proximo = atual->proximo;
+        novo->abaixo = analisado_ultimo;
+        novo->nivel = atual->nivel;
+        atual->proximo = novo;
+
+        if (randomizacao() == 1) return novo;
         return NULL;
     }
 
+    return NULL;
 }
 
+int lista_inserir(LISTA *lista, ITEM *item) {     /////// OKKKKKKKKKKKK
+    NO *novo;
+
+    novo = recursao_inserir(lista, item, lista->cabeca);
+
+    if (novo != NULL) {
+        return 1;
+    } else {
+        return 0;
+    }
+
+}
 
 int lista_alterar(LISTA *lista, char *palavra, char *significado) {
     // cria item que servirá para utilizar a busca, usando a palavra que terá o verbete alterado
     ITEM *procurado;
     procurado = item_criar(palavra, significado);
-    procurado = lista_busca(lista, procurado, MAX_LEVEL);
+    printf("oi");
+    procurado = lista_busca(lista, procurado);
+
+    printf("passoi");
     // muda o verbete da palavra
     item_set_significado(procurado, significado);
 }
@@ -114,54 +136,66 @@ void lista_remover(LISTA *lista, char *palavra){
 
 int recursao_remover(LISTA* lista, char* palavra, int level){
 
-    // NO *analisado = lista->cabeca->proximo;
-    // for(int i = 0; i < MAX_LEVEL - level; i++){
-    //     analisado = analisado->abaixo;
-    // }
-    
-    // while (analisado->proximo != NULL && strcmp(item_get_palavra(analisado->proximo->item), palavra) < 0){
-    //     analisado = analisado->proximo;
-    // }
-
-    // if(level == 0 && strcmp(item_get_palavra(analisado->proximo->item), palavra) != 0){
-    //     return 0;
-    // }
-
-    // if(strcmp(item_get_palavra(analisado->proximo->item), palavra) == 0){
-    //     NO *removido = analisado->proximo;
-    //     analisado->proximo = analisado->proximo->proximo;
-    //     free(removido);
-    //     recursao_remover(lista,palavra, level-1); // Se achou, desce um nível e tenta de novo
-    //     return 1;
-    // }
-
-
-    // recursao_remover(lista,palavra, level-1); // Se não achou, desce um nível e tenta de novo
-
-
-
-}
-
-
-ITEM* lista_busca(LISTA *lista, ITEM* item, int level){
     NO *analisado = lista->cabeca->proximo;
-    while (strcmp(item_get_palavra(analisado->item), item_get_palavra(item)) < 0) {
-        if (analisado->proximo == NULL) {
-            if (level == 0) {
-                return NULL;
-            }
-            return lista_busca(lista, analisado->item, level-1);
-        }
+    for(int i = 0; i < MAX_LEVEL - level; i++){
+        analisado = analisado->abaixo;
+    }
+    
+    while (analisado->proximo != NULL && strcmp(item_get_palavra(analisado->proximo->item), palavra) < 0){
         analisado = analisado->proximo;
     }
-    if (strcmp(item_get_palavra(analisado->item), item_get_palavra(item)) == 0) {
-        return analisado->item;
+
+    if(level == 0 && strcmp(item_get_palavra(analisado->proximo->item), palavra) != 0){
+        return 0;
     }
-    lista_busca(lista, analisado->item, level-1);
+
+    if(strcmp(item_get_palavra(analisado->proximo->item), palavra) == 0){
+        NO *removido = analisado->proximo;
+        analisado->proximo = analisado->proximo->proximo;
+        free(removido);
+        recursao_remover(lista,palavra, level-1); // Se achou, desce um nível e tenta de novo
+        return 1;
+    }
+
+    recursao_remover(lista,palavra, level-1); // Se não achou, desce um nível e tenta de novo
+
+
 }
+
+
+ITEM* lista_busca(LISTA *lista, ITEM *item_to_search) {
+    if (!lista || !item_to_search || !lista->cabeca) {
+        return NULL;
+    }
+
+    NO *analisado = lista->cabeca;
+
+    while (analisado) {
+        // Check the next node's key
+        if (analisado->proximo && strcmp(item_get_palavra(analisado->proximo->item), item_get_palavra(item_to_search)) < 0) {
+            // Move to the next node if its key is less than the target key
+            analisado = analisado->proximo;
+        } else {
+            if (analisado->proximo && strcmp(item_get_palavra(analisado->proximo->item), item_get_palavra(item_to_search)) == 0) {
+                // If next node's key matches the target key, return it
+                return analisado->proximo->item;
+            }
+            // If we're already on the bottom level and didn't find the item, return NULL
+            if (analisado->nivel == 0) {
+                return NULL;
+            }
+            // Move down one level
+            analisado = analisado->abaixo;
+        }
+    }
+
+    return NULL;
+}
+
 
 void lista_imprimir(LISTA *lista, char c){
     NO* primeiro;
+
 
     if((primeiro = lista_busca_caracter(lista, primeiro->item, MAX_LEVEL)) == NULL){
         printf("NAO HA PALAVRAS INICIADAS POR ch1\n");
@@ -224,9 +258,6 @@ int lista_apagar(LISTA **lista){
 
 }
 
-// int lista_tamanho(LISTA *lista){
-//     return lista->tamanho;
-// }
 
 int lista_vazia(LISTA *lista) {
     if(lista->cabeca == NULL) return 1;
