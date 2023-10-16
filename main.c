@@ -27,7 +27,7 @@ int main(){
             strcpy(significado2,significado);
             ITEM *nova_palavra;
             nova_palavra = item_criar(palavra2, significado2);
-            lista_insercao(dicionario, item_get_palavra(nova_palavra), item_get_significado(nova_palavra));
+            lista_insercao(dicionario, nova_palavra);
         
         }
         else if (strcmp(instrucao, "alteracao") == 0) {
@@ -66,7 +66,7 @@ int main(){
             }
 
         }
-        else if (strcmp(instrucao, "impressao") == 0) {
+        else if (strcmp(instrucao, "impressao") == 0) { // TÁ ERRADO 
 
             char c;
             scanf(" %c", &c);

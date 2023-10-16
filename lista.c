@@ -108,9 +108,7 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual) {   //////// OKKKKKKKK
     return NULL;
 }
 
-void lista_insercao(LISTA *lista, char *palavra, char *significado) {
-    ITEM *item;
-    item = item_criar(palavra, significado);
+void lista_insercao(LISTA *lista, ITEM* item) {
     lista_inserir(lista, item, lista->cabeca);
 }
 
@@ -209,16 +207,16 @@ void recursao_remover(LISTA* lista, char* palavra, NO *anterior) {
 
 
 ITEM *lista_busca(LISTA *lista, ITEM *item_to_search, NO *atual) {
-    if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && !(strcmp(item_get_palavra(item_to_search), item_get_palavra(atual->proximo->item)))) {
+    if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && item_igual(item_to_search,atual->proximo->item)) {
         return atual->proximo->item;
     }
 
     while (1) {
         if (atual->proximo == NULL) break;
 
-        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && !(strcmp(item_get_palavra(item_to_search), item_get_palavra(atual->proximo->item)))) return atual->proximo->item;
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && item_igual(item_to_search, atual->proximo->item) ) return atual->proximo->item;
 
-        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && (strcmp(item_get_palavra(item_to_search), item_get_palavra(atual->proximo->item)))) break;
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && !item_maior(item_to_search,atual->proximo->item)) break;
 
         atual = atual->proximo;
 
@@ -326,3 +324,5 @@ int lista_cheia(LISTA *lista){
     }
     return 1;
 }
+
+

@@ -14,7 +14,7 @@
 
     NO *cabeca(LISTA *lista);
 
-    void lista_insercao(LISTA *lista, char *palavra, char *significado);
+    void lista_insercao(LISTA *lista, ITEM* item);
 
     LISTA *lista_criar(void);
     
