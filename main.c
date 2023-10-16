@@ -15,8 +15,7 @@ int main(){
     // loop para realizar as instruções (não há um número predefinido)
     while (1) {
         //leitura da instrução
-        scanf("%s ", instrucao);
-
+        if (scanf(" %s ", instrucao) == EOF) break;
         if (strcmp(instrucao, "insercao") == 0) {
             // se a instrução for insercao, coleta a palavra até o espaço e o significado até o \n
             char * palavra2 = (char *) malloc(50);
@@ -28,7 +27,7 @@ int main(){
             strcpy(significado2,significado);
             ITEM *nova_palavra;
             nova_palavra = item_criar(palavra2, significado2);
-            if (lista_inserir(dicionario, nova_palavra) == 0) printf("OPERACAO INVALIDA\n");
+            lista_insercao(dicionario, item_get_palavra(nova_palavra), item_get_significado(nova_palavra));
         
         }
         else if (strcmp(instrucao, "alteracao") == 0) {
@@ -40,7 +39,7 @@ int main(){
             strcpy(palavra3,palavra);
             strcpy(significado3,significado);
             // alteração do significado da palavra
-            if (lista_alterar(dicionario, palavra, significado) == 0) printf("OPERACAO INVALIDA\n"); 
+            (lista_alterar(dicionario, palavra, significado) == 0); 
 
         }
         else if (strcmp(instrucao, "remocao") == 0) {
@@ -48,7 +47,7 @@ int main(){
             char * palavra4 = (char *) malloc(50);
             scanf(" %s", palavra);
             strcpy(palavra4,palavra);
-            lista_remover(dicionario, palavra4);
+            lista_remover(dicionario, palavra4, cabeca(dicionario));
         }
 
         else if (strcmp(instrucao, "busca") == 0) {
@@ -58,7 +57,7 @@ int main(){
             strcpy(palavra5,palavra);
             ITEM *item;
             item = item_criar(palavra5, "");
-            ITEM *resultado = lista_busca(dicionario, item);
+            ITEM *resultado = lista_busca(dicionario, item, cabeca(dicionario));
             // se a busca for bem sucedida, imprime seu significado, senão imprime que a operação é inválida
             if (resultado != NULL) {
                 printf("%s %s\n", item_get_palavra(resultado), item_get_significado(resultado));

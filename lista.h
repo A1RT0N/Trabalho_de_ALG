@@ -10,15 +10,21 @@
 
     #include "item.h"
 
-    LISTA *lista_criar(void);
+    typedef struct no_ NO;
 
-    int lista_inserir(LISTA *lista, ITEM *item);
+    NO *cabeca(LISTA *lista);
+
+    void lista_insercao(LISTA *lista, char *palavra, char *significado);
+
+    LISTA *lista_criar(void);
     
     int lista_alterar(LISTA *lista, char *palavra, char *significado);
 
-    void lista_remover(LISTA *lista, char *palavra);  
+    void lista_remover(LISTA *lista, char *palavra, NO *atual);  
 
-    ITEM* lista_busca(LISTA *lista, ITEM* item);
+    void recursao_remover(LISTA *lista, char *palavra, NO *anterior);
+
+    ITEM* lista_busca(LISTA* lista, ITEM* item, NO *atual);
 
     void imprimir_lista(LISTA *lista);
 

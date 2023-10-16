@@ -19,10 +19,17 @@ struct skiplist_ {
 NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual);
 int randomizacao(void);
 void imprimir_lista(LISTA *lista);
-int recursao_remover(LISTA* lista, char* palavra, int level);
+void recursao_remover(LISTA* lista, char* palavra, NO *anterior);
 NO* lista_busca_caracter(LISTA *lista, char c);
+NO *lista_inserir(LISTA *lista, ITEM *item, NO *atual);
 
+NO *cabeca(LISTA *lista) {
+    if (lista != NULL) {
+        return lista->cabeca;
+    }
+    return NULL;
 
+}
 int randomizacao(void) {
     return (rand() % 2);
 }
@@ -101,15 +108,43 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual) {   //////// OKKKKKKKK
     return NULL;
 }
 
-int lista_inserir(LISTA *lista, ITEM *item) {     /////// OKKKKKKKKKKKK
-    NO *novo;
+void lista_insercao(LISTA *lista, char *palavra, char *significado) {
+    ITEM *item;
+    item = item_criar(palavra, significado);
+    lista_inserir(lista, item, lista->cabeca);
+}
 
-    novo = recursao_inserir(lista, item, lista->cabeca);
 
-    if (novo == NULL) {
-        return 1;
-    } 
-    return 0;
+NO *lista_inserir(LISTA *lista, ITEM *item, NO *atual) {    
+    NO *ultimo = NULL;
+
+    while (1) {
+        if (atual->proximo == NULL) break;
+
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && (strcmp(item_get_palavra(item), item_get_palavra(atual->proximo->item)))) break;
+
+        atual = atual->proximo;
+
+    }
+
+    if (atual->abaixo != NULL) {
+        ultimo = lista_inserir(lista, item, atual->abaixo);
+    }
+
+    if (atual->nivel == 0 || (ultimo != NULL)) {
+        NO *new_node = (NO *) malloc(sizeof(NO));
+        new_node->item = item;
+        new_node->abaixo = ultimo;
+        new_node->nivel = atual->nivel;
+        new_node->proximo = atual->proximo;
+        atual->proximo = new_node;
+
+        if (randomizacao() && (atual->nivel < MAX_LEVEL - 1)) {
+            return new_node;
+        }
+    }
+
+    return NULL;
 
 }
 
@@ -117,7 +152,7 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {     // OKKKK
     // cria item que servirá para utilizar a busca, usando a palavra que terá o significado alterado
     ITEM *procurado;
     procurado = item_criar(palavra, significado);
-    procurado = lista_busca(lista, procurado);
+    procurado = lista_busca(lista, procurado, lista->cabeca);
 
     // muda o significado da palavra
     if (procurado != NULL) {
@@ -127,77 +162,73 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {     // OKKKK
     return 0;
 }
 
-void lista_remover(LISTA *lista, char *palavra){
-    if(recursao_remover(lista, palavra, MAX_LEVEL-1) == 0){
-        printf("OPERACAO INVALIDA\n");
-    }else{
+void lista_remover(LISTA *lista, char *palavra, NO *atual) {
+    while (1) {
+        if (atual->proximo->item == NULL) break;
+
+        if (atual->proximo->item != NULL && !strcmp(palavra, item_get_palavra(atual->proximo->item)) == 0) {
+            recursao_remover(lista, palavra, atual);
+
+            return;
+        }
+
+        if (atual->proximo->item != NULL && (strcmp(palavra, item_get_palavra(atual->proximo->item)) < 0)) break;
+
+        atual = atual->proximo;
+    }
+
+    if (atual->abaixo != NULL) {
+        lista_remover(lista, palavra, atual->abaixo);
+
         return;
     }
+
 }
 
-int recursao_remover(LISTA* lista, char* palavra, int level){
-    if (!lista || !palavra || level < 0) return 0;
-
-    NO *analisado = lista->cabeca;
-
-    // desça até o nível de partida
-    for (int i = 0; i < (MAX_LEVEL-1 - level); i++) {
-        analisado = analisado->abaixo;
+void recursao_remover(LISTA* lista, char* palavra, NO *anterior) {
+    while (strcmp(palavra, item_get_palavra(anterior->proximo->item))) {
+        anterior = anterior->proximo;
     }
 
-    int removed = 0; // para verificar se removemos um nó neste nível
+    NO *tmp = anterior->proximo;
+    ITEM *remover_item = tmp->proximo->item;
 
-    while (analisado->proximo) {
-        if (strcmp(item_get_palavra(analisado->proximo->item), palavra) == 0) {
-            // nó com palavra correspondente encontrado, remover
-            NO *tmp = analisado->proximo;
-            analisado->proximo = tmp->proximo;
+    tmp->proximo = NULL;
 
-            free(tmp->item);
-            free(tmp);
+    free(tmp);
 
-            removed = 1;
-            break; // uma vez que encontramos e removemos o nó, saímos do loop
-        }
-        analisado = analisado->proximo;
+    if (anterior->nivel == 0) {
+        item_apagar(&remover_item);
+
+        return;
     }
 
-    // se um nó foi removido neste nível, tentamos remover nos níveis abaixo também
-    if (level > 0) {
-        return removed + recursao_remover(lista, palavra, level - 1);
-    }
+    recursao_remover(lista, palavra, anterior->abaixo);
 
-    return removed;
 }
 
 
-ITEM* lista_busca(LISTA *lista, ITEM *item_to_search) {
-    if (!lista || !item_to_search || !lista->cabeca) {
+ITEM *lista_busca(LISTA *lista, ITEM *item_to_search, NO *atual) {
+    if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && !(strcmp(item_get_palavra(item_to_search), item_get_palavra(atual->proximo->item)))) {
+        return atual->proximo->item;
+    }
+
+    while (1) {
+        if (atual->proximo == NULL) break;
+
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && !(strcmp(item_get_palavra(item_to_search), item_get_palavra(atual->proximo->item)))) return atual->proximo->item;
+
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && (strcmp(item_get_palavra(item_to_search), item_get_palavra(atual->proximo->item)))) break;
+
+        atual = atual->proximo;
+
+    }
+
+    if (atual->abaixo != NULL) {
+        return lista_busca(lista, item_to_search, atual->abaixo);
+    } else {
         return NULL;
     }
-
-    NO *analisado = lista->cabeca;
-
-    while (analisado) {
-        // Checa a palavra do próximo nó
-        if (analisado->proximo && strcmp(item_get_palavra(analisado->proximo->item), item_get_palavra(item_to_search)) < 0) {
-            // Move para o próximo nó caso a palavra seja menor que a procurada
-            analisado = analisado->proximo;
-        } else {
-            if (analisado->proximo && strcmp(item_get_palavra(analisado->proximo->item), item_get_palavra(item_to_search)) == 0) {
-                // Se a palavra do próximo nó é a procurada, retorna o item
-                return analisado->proximo->item;
-            }
-            // Se chegou no nível mais baixo e não encontrou, retorna NULL
-            if (analisado->nivel == 0) {
-                return NULL;
-            }
-            // Desce um nível
-            analisado = analisado->abaixo;
-        }
-    }
-
-    return NULL;
 }
 
 
