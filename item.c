@@ -74,3 +74,11 @@ int item_maior(ITEM* item_novo, ITEM* item){
 
   return 0;
 }
+
+int item_igual(ITEM* item_novo, ITEM* item){
+  if(strcmp(item_get_palavra(item_novo), item_get_palavra(item)) == 0){
+    return 1;
+  }
+
+  return 0;
+}
