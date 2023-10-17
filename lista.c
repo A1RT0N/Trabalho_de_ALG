@@ -170,41 +170,40 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {     //  OKKK
 
 
 void recursao_remover(LISTA *lista, ITEM *item, NO *anterior) {
-    while ((anterior->proximo != NULL) && (!item_igual(anterior->proximo->item, item))) {
+    NO *cabeca_emergencia = anterior;
+    while (anterior->proximo != NULL && !item_igual(item, anterior->proximo->item)) {
         anterior = anterior->proximo;
-        printf("TA NO WHULE\n");
     }
-
-    printf("SAIU DO WHILE\n");
-
-
-    NO *tmp = anterior->proximo;
-    
-    if (tmp != NULL) {
+    if (anterior->proximo == NULL && cabeca_emergencia->abaixo != NULL) {
+        recursao_remover(lista, item, cabeca_emergencia->abaixo);
+    } else if ((anterior->proximo != NULL) && item_igual(item, anterior->proximo->item)) {
+        NO *tmp = anterior->proximo;
         anterior->proximo = tmp->proximo;
-
-        // Free the memory for the item
-        item_apagar(&(tmp->item));
-
-        // Free the memory for the NO node
+        if (anterior->abaixo == NULL) {
+            item_apagar(&(tmp->item));
+        }
         free(tmp);
         tmp = NULL;
-        printf("APAGOUUUUUUUU\n");
+
+        if (anterior->abaixo != NULL) {
+            recursao_remover(lista, item, anterior->abaixo);
+        } else {
+            return;
+        }
+        
     }
 
-    if (anterior->nivel == 0) {
-        return;
-    }
 
-    if (anterior->abaixo != NULL) {
-        recursao_remover(lista, item, anterior->abaixo);
-    }
+
+    
 }
 
 
-void lista_remover(LISTA *lista, ITEM *item, NO *atual) {  //// NNNAAOOOO OKKKKK
-    if (atual->proximo == NULL) return;
 
+
+
+void lista_remover(LISTA *lista, ITEM *item, NO *atual) {  //// NNNAAOOOO OKKKKK
+    printf("VAI ENTRAR NA REMOCAO RECURSIVA\n");
     recursao_remover(lista, item, atual);
 
 }

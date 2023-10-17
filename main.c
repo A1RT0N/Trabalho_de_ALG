@@ -45,22 +45,16 @@ int main(){
         // O ERRO TA AQUIIIIIIIII ##############################################################################################
         else if (strcmp(instrucao, "remocao") == 0) { 
             char *palavra4 = (char *) malloc(50);
-            printf("CRIOU PALAVRA 4\n");
-            scanf(" %s ", palavra4);
-            // strcpy(palavra4, palavra);
-            printf("DEU STRCOPY\n");
-            ITEM *item = item_criar(palavra4, "");
-            printf("CIROU ITEM\n");
-            if (lista_busca(dicionario, item, cabeca(dicionario)) == 0){
+            scanf(" %s", palavra);
+            strcpy(palavra4, palavra);
+            ITEM *palavra_remover = item_criar(palavra4, "");
+            if (lista_busca(dicionario, palavra_remover, cabeca(dicionario)) == 0){
                 printf("OPERACAO INVALIDA\n");
             }
             else {
-                printf("ENTROU NO ELSE ENTAO VAI REMOVER\n");
-                lista_remover(dicionario, item, cabeca(dicionario));
+                lista_remover(dicionario, palavra_remover, cabeca(dicionario));
             }
         }
-        // ATE AQUIIIIIIIIII  #######################################################################################################
-
 
 
         else if (strcmp(instrucao, "busca") == 0) {
