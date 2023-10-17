@@ -16,7 +16,7 @@ int main(){
     while (1) {
         //leitura da instrução
         if (scanf(" %s ", instrucao) == EOF) break;
-        if (strcmp(instrucao, "insercao") == 0) { //////////// OKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+        if (strcmp(instrucao, "insercao") == 0) { 
             // se a instrução for insercao, coleta a palavra até o espaço e o significado até o \n
             char * palavra2 = (char *) malloc(50);
             char * significado2 = (char *) malloc(140);
@@ -30,7 +30,7 @@ int main(){
             lista_insercao(dicionario, nova_palavra);
         
         }
-        else if (strcmp(instrucao, "alteracao") == 0) { ///////// OKKKKKKKKKKKKKKKKKKKKKKKKKK
+        else if (strcmp(instrucao, "alteracao") == 0) { 
             // definição de palavra e significado que serão utilizados
             char * palavra3 = (char *) malloc(50);
             char * significado3 = (char *) malloc(140);
@@ -46,7 +46,6 @@ int main(){
             // alteração do significado da palavra
 
         }
-        // O ERRO TA AQUIIIIIIIII ##############################################################################################
         else if (strcmp(instrucao, "remocao") == 0) { 
             char *palavra4 = (char *) malloc(50);
             scanf(" %s", palavra);
@@ -93,6 +92,8 @@ int main(){
         }
 
     }
+
+    lista_apagar(&dicionario);
     
     return 0;
 }
