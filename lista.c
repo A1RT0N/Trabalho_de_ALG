@@ -116,6 +116,12 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual) {   //////// OKKKKKKKK
 }
 
 void lista_insercao(LISTA *lista, ITEM *item) {   //////// OKKKKKKKKKKK
+
+    if(lista_busca(lista, item, lista->cabeca) != NULL) {
+        printf("OPERACAO INVALIDA\n"); 
+        return;
+    };
+
     lista_inserir(lista, item, lista->cabeca);
 }
 
@@ -203,7 +209,6 @@ void recursao_remover(LISTA *lista, ITEM *item, NO *anterior) {
 
 
 void lista_remover(LISTA *lista, ITEM *item, NO *atual) {  //// NNNAAOOOO OKKKKK
-    printf("VAI ENTRAR NA REMOCAO RECURSIVA\n");
     recursao_remover(lista, item, atual);
 
 }

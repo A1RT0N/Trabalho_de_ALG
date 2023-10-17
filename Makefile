@@ -14,7 +14,7 @@ clean:
 	rm *.o lista_programa
 
 run:
-	./lista_programa < 1.in
+	./lista_programa < 2.in > 2.out
 
 rodar: 
 	@make -s all
