@@ -38,8 +38,12 @@ int main(){
             scanf(" %[^\n]", significado);
             strcpy(palavra3,palavra);
             strcpy(significado3,significado);
+            if(lista_busca(dicionario, item_criar(palavra3, ""), cabeca(dicionario)) == 0){
+                printf("OPERACAO INVALIDA\n");
+            }else{
+                (lista_alterar(dicionario, palavra, significado) == 0); 
+            }
             // alteração do significado da palavra
-            (lista_alterar(dicionario, palavra, significado) == 0); 
 
         }
         // O ERRO TA AQUIIIIIIIII ##############################################################################################
