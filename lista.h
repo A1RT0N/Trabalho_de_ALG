@@ -14,17 +14,17 @@
 
     NO *cabeca(LISTA *lista);
 
-    void lista_insercao(LISTA *lista, ITEM* item);
+    void lista_insercao(LISTA *lista, ITEM *item);
 
     LISTA *lista_criar(void);
     
     int lista_alterar(LISTA *lista, char *palavra, char *significado);
 
-    void lista_remover(LISTA *lista, char *palavra, NO *atual);  
+    void lista_remover(LISTA *lista, ITEM *item, NO *atual);  
 
-    void recursao_remover(LISTA *lista, char *palavra, NO *anterior);
+    void recursao_remover(LISTA *lista, ITEM *item, NO *anterior);
 
-    ITEM* lista_busca(LISTA* lista, ITEM* item, NO *atual);
+    ITEM* lista_busca(LISTA *lista, ITEM* item, NO *atual);
 
     void imprimir_lista(LISTA *lista);
 

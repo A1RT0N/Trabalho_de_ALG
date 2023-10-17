@@ -19,7 +19,7 @@ struct skiplist_ {
 NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual);
 int randomizacao(void);
 void imprimir_lista(LISTA *lista);
-void recursao_remover(LISTA* lista, char* palavra, NO *anterior);
+void recursao_remover(LISTA* lista, ITEM *item, NO *anterior);
 NO* lista_busca_caracter(LISTA *lista, char c);
 NO *lista_inserir(LISTA *lista, ITEM *item, NO *atual);
 
@@ -66,17 +66,24 @@ LISTA *lista_criar(void) {  /// OKKKKKKKKKKKKKKKKK
     return skiplist;
 }
 
-void imprimir_lista(LISTA *lista) {        //////     OKKKKKKKKKKKK
+void imprimir_lista(LISTA *lista) {        //////     NÃO OKKKKKKKKKKK
     NO *atual = lista->cabeca;
+    int descer = 0;
         for (int i = 0; i < MAX_LEVEL; i++) {  
+        atual = lista->cabeca;
+        for (int i = 0; i < descer; i++) {
+            atual = atual->abaixo;
+        }
         while (atual->proximo != NULL) {
             printf("Nivel: %d\n", atual->proximo->nivel);
             printf("Palavra: %s\n", item_get_palavra(atual->proximo->item));
             printf("Significado: %s\n", item_get_significado(atual->proximo->item));
             printf("\n");
             atual = atual->proximo;
+            
         }
-        atual = atual->abaixo;
+        descer++;
+        
     }
 
 }
@@ -108,18 +115,18 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual) {   //////// OKKKKKKKK
     return NULL;
 }
 
-void lista_insercao(LISTA *lista, ITEM* item) {
+void lista_insercao(LISTA *lista, ITEM *item) {   //////// OKKKKKKKKKKK
     lista_inserir(lista, item, lista->cabeca);
 }
 
 
-NO *lista_inserir(LISTA *lista, ITEM *item, NO *atual) {    
+NO *lista_inserir(LISTA *lista, ITEM *item, NO *atual) {        /////////// OKKKKKKKKK
     NO *ultimo = NULL;
 
     while (1) {
         if (atual->proximo == NULL) break;
 
-        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && (strcmp(item_get_palavra(item), item_get_palavra(atual->proximo->item)))) break;
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && (!item_maior(item, atual->proximo->item))) break;
 
         atual = atual->proximo;
 
@@ -146,7 +153,7 @@ NO *lista_inserir(LISTA *lista, ITEM *item, NO *atual) {
 
 }
 
-int lista_alterar(LISTA *lista, char *palavra, char *significado) {     // OKKKKKKKKKKKKK
+int lista_alterar(LISTA *lista, char *palavra, char *significado) {     //  OKKKKKKKKKKKKK
     // cria item que servirá para utilizar a busca, usando a palavra que terá o significado alterado
     ITEM *procurado;
     procurado = item_criar(palavra, significado);
@@ -160,63 +167,60 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {     // OKKKK
     return 0;
 }
 
-void lista_remover(LISTA *lista, char *palavra, NO *atual) {
-    while (1) {
-        if (atual->proximo->item == NULL) break;
 
-        if (atual->proximo->item != NULL && !strcmp(palavra, item_get_palavra(atual->proximo->item)) == 0) {
-            recursao_remover(lista, palavra, atual);
 
-            return;
-        }
-
-        if (atual->proximo->item != NULL && (strcmp(palavra, item_get_palavra(atual->proximo->item)) < 0)) break;
-
-        atual = atual->proximo;
-    }
-
-    if (atual->abaixo != NULL) {
-        lista_remover(lista, palavra, atual->abaixo);
-
-        return;
-    }
-
-}
-
-void recursao_remover(LISTA* lista, char* palavra, NO *anterior) {
-    while (strcmp(palavra, item_get_palavra(anterior->proximo->item))) {
+void recursao_remover(LISTA *lista, ITEM *item, NO *anterior) {
+    while ((anterior->proximo != NULL) && (!item_igual(anterior->proximo->item, item))) {
         anterior = anterior->proximo;
+        printf("TA NO WHULE\n");
     }
+
+    printf("SAIU DO WHILE\n");
+
 
     NO *tmp = anterior->proximo;
-    ITEM *remover_item = tmp->proximo->item;
+    
+    if (tmp != NULL) {
+        anterior->proximo = tmp->proximo;
 
-    tmp->proximo = NULL;
+        // Free the memory for the item
+        item_apagar(&(tmp->item));
 
-    free(tmp);
+        // Free the memory for the NO node
+        free(tmp);
+        tmp = NULL;
+        printf("APAGOUUUUUUUU\n");
+    }
 
     if (anterior->nivel == 0) {
-        item_apagar(&remover_item);
-
         return;
     }
 
-    recursao_remover(lista, palavra, anterior->abaixo);
+    if (anterior->abaixo != NULL) {
+        recursao_remover(lista, item, anterior->abaixo);
+    }
+}
+
+
+void lista_remover(LISTA *lista, ITEM *item, NO *atual) {  //// NNNAAOOOO OKKKKK
+    if (atual->proximo == NULL) return;
+
+    recursao_remover(lista, item, atual);
 
 }
 
 
-ITEM *lista_busca(LISTA *lista, ITEM *item_to_search, NO *atual) {
-    if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && item_igual(item_to_search,atual->proximo->item)) {
+ITEM *lista_busca(LISTA *lista, ITEM *item_to_search, NO *atual) {  /////  OKKKKKKKK
+    if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && item_igual(item_to_search, atual->proximo->item)) {
         return atual->proximo->item;
     }
 
     while (1) {
         if (atual->proximo == NULL) break;
 
-        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && item_igual(item_to_search, atual->proximo->item) ) return atual->proximo->item;
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && item_igual(item_to_search, atual->proximo->item)) return atual->proximo->item;
 
-        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && !item_maior(item_to_search,atual->proximo->item)) break;
+        if ((atual->proximo != NULL) && (atual->proximo->item != NULL) && (!item_maior(item_to_search, atual->proximo->item))) break;
 
         atual = atual->proximo;
 
@@ -230,7 +234,7 @@ ITEM *lista_busca(LISTA *lista, ITEM *item_to_search, NO *atual) {
 }
 
 
-void lista_imprimir(LISTA *lista, char c){ // OKKKKKKKKKKKKKKKKK
+void lista_imprimir(LISTA *lista, char c){ // NAAAAAAAAAAAAAAAAAAO 
     NO* primeiro;
 
     // caso não seja encontrada nenhuma palavra com a letra desejada, o aviso é impresso
@@ -239,14 +243,14 @@ void lista_imprimir(LISTA *lista, char c){ // OKKKKKKKKKKKKKKKKK
         return;
     }
     // caso contrário, são impressas as palavras e seus significados que começam com a letra desejada
-    while ((primeiro != NULL) && !(item_get_palavra(primeiro->item)[0] != c)) {
-        item_imprimir(primeiro->item);
+    while (primeiro != NULL && item_get_palavra(primeiro->item)[0] == c) {
+        printf("%s %s\n", item_get_palavra(primeiro->item), item_get_significado(primeiro->item));
         primeiro = primeiro->proximo;
     }
 
 }
 
-NO* lista_busca_caracter(LISTA *lista, char c) { // OKKKKKKKKKKKKKKK
+NO* lista_busca_caracter(LISTA *lista, char c) {
     if (!lista || !lista->cabeca) {
         return NULL;
     }
@@ -255,19 +259,25 @@ NO* lista_busca_caracter(LISTA *lista, char c) { // OKKKKKKKKKKKKKKK
 
     while (analisado) {
         // Check the next node's key
-        if (analisado->proximo && item_get_palavra(analisado->proximo->item)[0] < c) {
-            // Move to the next node if its key is less than the target key
-            analisado = analisado->proximo;
-        } else {
-            if (analisado->proximo && item_get_palavra(analisado->proximo->item)[0] == c) {
+        if (analisado->proximo != NULL) {
+            char next_char = item_get_palavra(analisado->proximo->item)[0];
+
+            if (next_char < c) {
+                // Move to the next node if its key is less than the target key
+                analisado = analisado->proximo;
+            } else if (next_char == c) {
                 // If next node's key matches the target key, return it
-                return analisado->proximo;
+                if (analisado->abaixo != NULL) {
+                    analisado = analisado->abaixo;
+                } else {
+                    return analisado->proximo;
+                }
+            } else {
+                // Move down to the lower level
+                analisado = analisado->abaixo;
             }
-            // If we're already on the bottom level and didn't find the item, return NULL
-            if (analisado->nivel == 0) {
-                return NULL;
-            }
-            // Move down one level
+        } else {
+            // Move down to the lower level
             analisado = analisado->abaixo;
         }
     }
@@ -276,13 +286,14 @@ NO* lista_busca_caracter(LISTA *lista, char c) { // OKKKKKKKKKKKKKKK
 }
 
 
-int lista_apagar(LISTA **lista){
+
+int lista_apagar(LISTA **lista){  /////   FFFFFFFFFFOOOOOOOOOOOOOOOOODDDDDDDDDDDDDDDEEEEEEEEEEEEUUUUUUU
     // definição de dois nós auxiliares para a liberação de memória
     NO *tmp = (*lista)->cabeca;
     NO *prox;
     // int j auxiliar para saber quantos níveis descer antes de ir para direita
     int j = 1;
-    for (int i = MAX_LEVEL; i >=0; i--) {
+    for (int i = MAX_LEVEL; i >= 0; i--) {
         // free em todos os items e nós do nível
         prox = tmp->proximo;
         while (tmp != NULL) {
@@ -324,5 +335,3 @@ int lista_cheia(LISTA *lista){
     }
     return 1;
 }
-
-

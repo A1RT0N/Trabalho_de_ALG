@@ -19,8 +19,9 @@
 
 	int item_maior(ITEM* item_novo, ITEM* item);
 
+	int item_igual(ITEM *item1, ITEM *item2);
 
-	int item_igual(ITEM* item1, ITEM* item2);
-	int item_maior(ITEM* item1, ITEM* item2);
+	
+
 
 #endif
