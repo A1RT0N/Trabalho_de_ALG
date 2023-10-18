@@ -117,11 +117,6 @@ NO* recursao_inserir(LISTA* lista, ITEM* item, NO *atual) {
 
 void lista_insercao(LISTA *lista, ITEM *item) {
 
-    if(lista_busca(lista, item, lista->cabeca) != NULL) {
-        printf("OPERACAO INVALIDA\n"); 
-        return;
-    };
-
     lista_inserir(lista, item, lista->cabeca);
 }
 
@@ -169,7 +164,12 @@ int lista_alterar(LISTA *lista, char *palavra, char *significado) {
     if (procurado != NULL) {
         item_set_significado(procurado, significado);
         return 1;
+    }else{
+        item_apagar(&procurado);
     }
+
+
+
     return 0;
 }
 
@@ -303,6 +303,9 @@ int lista_apagar(LISTA **lista) {
 
             if(proximo) {
                 horizontal->proximo = proximo->proximo;
+                free(proximo->abaixo);
+                free(proximo->proximo);
+                free(proximo->item);
                 free(proximo);
             } else {
                 horizontal = NULL;
@@ -311,6 +314,8 @@ int lista_apagar(LISTA **lista) {
 
         NO* tmp = atual;
         atual = atual->abaixo;
+        free(tmp->abaixo);
+        free(tmp->proximo);
         free(tmp);
     }
 

@@ -1,8 +1,8 @@
 #include "item.h"
 
 struct item_{ 
-  char palavra[50];
-  char significado[140];
+  char palavra[51];
+  char significado[141];
 };
 
 ITEM *item_criar(char palavra[], char significado[]){
