@@ -14,4 +14,4 @@ clean:
 	rm *.o lista_programa
 
 run:
-	valgrind --leak-check=full ./lista_programa < 2.in > 2.out 
+	./lista_programa 

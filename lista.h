@@ -26,7 +26,7 @@
 
     ITEM* lista_busca(LISTA *lista, ITEM* item, NO *atual);
 
-    void imprimir_lista(LISTA *lista); 
+    void imprimir_lista(LISTA *lista);
 
     void lista_imprimir(LISTA *lista, char c);
 
